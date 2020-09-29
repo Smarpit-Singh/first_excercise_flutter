@@ -5,68 +5,49 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 void main() {
-  runApp(HttpData());
+  runApp(LoadJson());
 }
 
-class HttpData extends StatefulWidget {
-  @override
-  MyGetHttpDataState createState() => MyGetHttpDataState();
-}
-
-class MyGetHttpDataState extends State<HttpData> {
-  final String url = "https://swapi.dev/api/people";
-  List data;
-
-  Future<String> getJSONData() async {
-    var response = await http
-        .get(Uri.encodeFull(url), headers: {"Accept": "application/json"});
-
-    print(response.body);
-
-    setState(() {
-      var dataConvertedToJSON = json.decode(response.body);
-
-      data = dataConvertedToJSON['results'];
-    });
-
-    return "Successfull";
-  }
-
+class LoadJson extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Retrieve JSON Data via HTTP GET"),
-      ),
-      body: ListView.builder(
-          itemCount: data == null ? 0 : data.length,
-          itemBuilder: (BuildContext context, int index) {
-            return Container(
-              child: Center(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      Card(
-                        child: Container(
-                          child: Text(
-                            data[index]['name'],
-                            style: TextStyle(
-                                fontSize: 20.0, color: Colors.lightBlueAccent),
-                          ),
-                          padding: const EdgeInsets.all(15.0),
+        appBar: AppBar(
+          title: Text("Load local JSON file"),
+        ),
+        body: Container(
+          child: Center(
+
+            child: FutureBuilder(
+                future: DefaultAssetBundle.of(context)
+                    .loadString('assets/starwars_data.json'),
+                builder: (BuildContext context, AsyncSnapshot snapshot) {
+
+                  var new_data = json.decode(snapshot.data.toString());
+
+                  return ListView.builder(
+
+                    itemBuilder: (BuildContext context, int index) {
+                      return Card(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: <Widget>[
+                            Text("Name: " + new_data[index]['name']),
+                            Text("Height: " + new_data[index]['height']),
+                            Text("Mass: " + new_data[index]['mass']),
+                            Text("Hair Color: " + new_data[index]['hair_color']),
+                            Text("Skin Color: " + new_data[index]['skin_color']),
+                            Text("Eye Color: " + new_data[index]['eye_color']),
+                            Text("Birth Year: " + new_data[index]['birth_year']),
+                            Text("Gender: " + new_data[index]['gender'])
+                          ],
                         ),
-                      )
-                    ],
-                  )),
-            );
-          }),
-    );
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    this.getJSONData();
+                      );
+                    },
+                    itemCount: new_data == null ? 0 : new_data.length,
+                  );
+                }),
+          ),
+        ));
   }
 }
