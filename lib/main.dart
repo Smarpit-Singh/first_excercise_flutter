@@ -7,6 +7,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -24,9 +25,18 @@ class MyApp extends StatelessWidget {
             // Center the content
             child: Center(
               // Add Text
-              child: Text("Hello World!"),
+              child: RaisedButton(
+                child: Text(
+                    'Hiiii'
+                ),
+                onPressed: buttonPressed,
+              ),
             ),
           ),
         ));
+  }
+
+  void buttonPressed() {
+    print('called');
   }
 }
